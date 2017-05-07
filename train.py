@@ -294,6 +294,13 @@ def main():
     try:
         for step in range(saved_global_step + 1, args.num_steps):
             start_time = time.time()
+            if step % 500 == 0:
+                print('Decreasing learning rate.')
+                optimizer = optimizer_factory[args.optimizer](
+                    learning_rate=(args.learning_rate * (.99^(step / 500))),
+                    momentum=args.momentum)
+                trainable = tf.trainable_variables()
+                optim = optimizer.minimize(loss, var_list=trainable)
             if args.store_metadata and step % 50 == 0:
                 # Slow run that stores extra information for debugging.
                 print('Storing metadata')
